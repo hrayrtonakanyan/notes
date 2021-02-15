@@ -4,6 +4,9 @@ import com.disqo.assessment.notes.models.db.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Hrayr
@@ -12,4 +15,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
+
+    List<Note> findAllByIdIn(Collection<Long> noteIdColl);
 }

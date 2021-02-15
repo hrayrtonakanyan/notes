@@ -45,6 +45,16 @@ public class NoteController {
         logger.debug("[POST_NOTES - resp] [" + (System.currentTimeMillis() - startTs) + "]");
         return new Response("areNotesAdded", true);
     }
+
+    @PutMapping("/notes")
+    public Response putNotes(@RequestAttribute(RequestConstants.USER_SESSION_ATTRIBUTE_NAME) final UserSession userSession,
+                             @RequestBody final List<NoteDTO> noteDTOList) {
+        long startTs = System.currentTimeMillis();
+        logger.debug("[PUT_NOTES - req] " + noteDTOList.toString());
+        noteService.updateNotes(userSession, noteDTOList);
+        logger.debug("[PUT_NOTES - resp] [" + (System.currentTimeMillis() - startTs) + "]");
+        return new Response("areNotesAdded", true);
+    }
     // endregion
 
     // region Setters

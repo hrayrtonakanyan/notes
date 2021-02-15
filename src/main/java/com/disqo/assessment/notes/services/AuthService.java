@@ -56,7 +56,6 @@ public class AuthService {
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         userRepository.save(user);
 
-
         String accessToken = createUserSessionToken(user, true);
         String refreshToken = createUserSessionToken(user, false);
 

@@ -1,4 +1,4 @@
-package com.disqo.assessment.notes.models;
+package com.disqo.assessment.notes.models.network;
 
 import java.util.HashMap;
 import java.util.Map;

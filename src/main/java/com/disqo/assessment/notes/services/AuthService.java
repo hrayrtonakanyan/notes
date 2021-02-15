@@ -8,6 +8,7 @@ import com.disqo.assessment.notes.models.network.UserAuthData;
 import com.disqo.assessment.notes.repositories.UserRepository;
 import com.disqo.assessment.notes.utils.NotesProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -65,6 +66,32 @@ public class AuthService {
         return userTokenMap;
     }
 
+    public String token(String grantType, String refreshToken) {
+
+        if (!"grant_type".equals(grantType)) {
+            String errorMessage = String.format("[INVALID_GRANT_TYPE] grantType=%s", grantType);
+            throw new InvalidRequestException(Response.ErrorType.INVALID_GRANT_TYPE, errorMessage);
+        }
+        Map<String, String> userInfoMap = decodeJwt(refreshToken);
+        if (userInfoMap == null) {
+            String errorMessage = "[NOT_AUTHORISED - INVALID_TOKEN] userInfoMap is null.";
+            throw new InvalidRequestException(Response.ErrorType.INVALID_TOKEN, errorMessage);
+        }
+        User user = userRepository.findByEmail(userInfoMap.get("email"));
+        if (user == null) {
+            String errorMessage = String.format("[INVALID_TOKEN - USER_NOT_FOUND] email=%s", userInfoMap.get("email"));
+            throw new InvalidRequestException(Response.ErrorType.INVALID_TOKEN, errorMessage);
+
+        } else if (!user.getPassword().equals(userInfoMap.get("password"))) {
+            String errorMessage = String.format("[INVALID_TOKEN - INVALID_PASSWORD] email=%s", userInfoMap.get("email"));
+            throw new InvalidRequestException(Response.ErrorType.INVALID_TOKEN, errorMessage);
+        }
+        user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        userRepository.save(user);
+
+        return createUserSessionToken(user, true);
+    }
+
     public String createUserSessionToken(User user, boolean isAccessToken) {
         try {
             String userSessionStr;
@@ -85,6 +112,21 @@ public class AuthService {
         } catch (JsonProcessingException e) {
             logger.error("Can not parse UserSession to String. username=" + user.getEmail() + ", " + e.getMessage());
             logger.info("Can not parse UserSession to String. username=" + user.getEmail() + ", " + e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private Map<String, String> decodeJwt(String jwtToken) {
+        String userSessionJson = "";
+        try {
+            userSessionJson = (String) Jwts.parser()
+                    .setSigningKey(TextCodec.BASE64.encode(NotesProperties.getJwtSecretKey()))
+                    .parseClaimsJws(jwtToken)
+                    .getBody().get("sub");
+            return mapper.readValue(userSessionJson, new TypeReference<Map<String, String>>() {});
+        } catch (Exception e) {
+            logger.error("Can not parse token to Map. userSessionJson=" + userSessionJson + ", " + e.getMessage());
+            logger.info("Can not parse token to Map. userSessionJson=" + userSessionJson + ", " + e.getMessage(), e);
             return null;
         }
     }

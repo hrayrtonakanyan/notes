@@ -1,5 +1,6 @@
 package com.disqo.assessment.notes.controllers;
 
+import com.disqo.assessment.notes.constants.RequestConstants;
 import com.disqo.assessment.notes.models.network.Response;
 import com.disqo.assessment.notes.models.network.UserAuthData;
 import com.disqo.assessment.notes.services.AuthService;
@@ -41,6 +42,16 @@ public class AuthController {
         Map<String, String> userTokens = authService.logIn(userAuthData);
         logger.debug("[POST_NOTES - resp] [" + (System.currentTimeMillis() - startTs) + "]");
         return new Response(userTokens);
+    }
+
+    @PostMapping("/token")
+    public Response postToken(@RequestParam(RequestConstants.GRANT_TYPE_PARAMETER_NAME) final String grantType,
+                              @RequestParam(RequestConstants.REFRESH_TOKEN_PARAMETER_NAME) final String refreshToken) {
+        long startTs = System.currentTimeMillis();
+        logger.debug("[POST_NOTES - req]");
+        String accessToken = authService.token(grantType, refreshToken);
+        logger.debug("[POST_NOTES - resp] [" + (System.currentTimeMillis() - startTs) + "]");
+        return new Response("accessToken", accessToken);
     }
     // endregion
 

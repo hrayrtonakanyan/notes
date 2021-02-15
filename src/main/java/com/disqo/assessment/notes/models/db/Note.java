@@ -1,5 +1,7 @@
 package com.disqo.assessment.notes.models.db;
 
+import com.disqo.assessment.notes.models.network.NoteDTO;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -27,13 +29,11 @@ public class Note {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    public Note(long id, long userId, String title, String note, Timestamp createdAt, Timestamp updatedAt) {
-        this.id = id;
+    public Note(NoteDTO noteDTO, long userId) {
         this.userId = userId;
-        this.title = title;
-        this.note = note;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.title = noteDTO.getTitle();
+        this.note = noteDTO.getNote();
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
     public Note() {

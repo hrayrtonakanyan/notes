@@ -3,9 +3,6 @@ package com.disqo.assessment.notes.utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.util.Properties;
-
 /**
  * Created with IntelliJ IDEA.
  * User: Hrayr
@@ -27,6 +24,8 @@ public class NotesProperties {
     private static final String jwtSecretKey = "sdfadfghsfgjhdgfhjdghmdghnsfbadf";
 
     private static final long accessTokenLiveTime = 5L * 60 * 60 * 1000;
+    private static final int noteTitleMaxLength = 50;
+    private static final int noteBodyMaxLength = 1000;
     // endregion
 
     // region Getters
@@ -53,5 +52,14 @@ public class NotesProperties {
     public static long getAccessTokenLiveTime() {
         return accessTokenLiveTime;
     }
+
+    public static int getNoteTitleMaxLength() {
+        return noteTitleMaxLength;
+    }
+
+    public static int getNoteBodyMaxLength() {
+        return noteBodyMaxLength;
+    }
+
     // endregion
 }

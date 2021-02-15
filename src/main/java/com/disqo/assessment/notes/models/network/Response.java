@@ -76,6 +76,7 @@ public class Response {
         TOKEN_EXPIRED,
         USER_NOT_FOUND,
         INVALID_PASSWORD,
-        INVALID_GRANT_TYPE
+        INVALID_GRANT_TYPE,
+        PARAMETER_MISMATCH
     }
 }

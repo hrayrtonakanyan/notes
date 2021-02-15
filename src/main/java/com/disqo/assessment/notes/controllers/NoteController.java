@@ -53,7 +53,17 @@ public class NoteController {
         logger.debug("[PUT_NOTES - req] " + noteDTOList.toString());
         noteService.updateNotes(userSession, noteDTOList);
         logger.debug("[PUT_NOTES - resp] [" + (System.currentTimeMillis() - startTs) + "]");
-        return new Response("areNotesAdded", true);
+        return new Response("areNotesUpdated", true);
+    }
+
+    @DeleteMapping("/notes")
+    public Response deleteNotes(@RequestAttribute(RequestConstants.USER_SESSION_ATTRIBUTE_NAME) final UserSession userSession,
+                                @RequestBody final List<Long> noteIdList) {
+        long startTs = System.currentTimeMillis();
+        logger.debug("[DELETE_NOTES - req] " + noteIdList.toString());
+        noteService.deleteNotes(userSession, noteIdList);
+        logger.debug("[DELETE_NOTES - resp] [" + (System.currentTimeMillis() - startTs) + "]");
+        return new Response("areNotesDeleted", true);
     }
     // endregion
 

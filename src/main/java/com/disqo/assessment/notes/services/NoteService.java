@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -75,6 +76,11 @@ public class NoteService {
             note.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         }
         noteRepository.saveAll(noteList);
+    }
+
+    @Transactional
+    public void deleteNotes(UserSession userSession, List<Long> noteIdList) {
+        noteRepository.deleteAllByUserIdAndIdIn(userSession.getUserId(), noteIdList);
     }
     // endregion
 

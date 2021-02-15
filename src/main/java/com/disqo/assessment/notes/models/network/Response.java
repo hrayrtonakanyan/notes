@@ -69,6 +69,11 @@ public class Response {
         PARAMETER_MISSED,
         REQUEST_URI_NOT_FOUND,
         PARAMETER_TYPE_MISMATCH,
-        INTERNAL_ERROR
+        INTERNAL_ERROR,
+
+        TOKEN_NOT_FOUND,
+        INVALID_TOKEN,
+        TOKEN_EXPIRED,
+        USER_NOT_FOUND
     }
 }

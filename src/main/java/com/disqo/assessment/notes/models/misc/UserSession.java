@@ -10,10 +10,12 @@ public class UserSession {
 
     private long userId;
     private String email;
+    private long createdAt;
 
     public UserSession(long userId, String email) {
         this.userId = userId;
         this.email = email;
+        this.createdAt = System.currentTimeMillis();
     }
 
     public UserSession() {
@@ -35,11 +37,20 @@ public class UserSession {
         this.email = email;
     }
 
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "UserSession{" +
                 "userId=" + userId +
                 ", email='" + email + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

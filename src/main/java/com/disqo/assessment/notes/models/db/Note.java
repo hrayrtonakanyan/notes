@@ -29,6 +29,10 @@ public class Note {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
+
     public Note(NoteDTO noteDTO, long userId) {
         this.userId = userId;
         this.title = noteDTO.getTitle();
@@ -85,6 +89,14 @@ public class Note {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

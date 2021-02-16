@@ -10,6 +10,8 @@ import com.disqo.assessment.notes.utils.NotesProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +78,18 @@ public class NoteService {
             note.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         }
         noteRepository.saveAll(noteList);
+    }
+
+    public List<NoteDTO> getNotes(UserSession userSession, int offset, int limit) {
+
+        Pageable pageable = PageRequest.of(offset, limit);
+        List<Note> noteList = noteRepository.findAllByUserIdOrderByCreatedAt(userSession.getUserId(), pageable);
+
+        List<NoteDTO> noteDTOList = new ArrayList<>();
+        for (Note note : noteList) {
+            noteDTOList.add(new NoteDTO(note));
+        }
+        return noteDTOList;
     }
 
     @Transactional

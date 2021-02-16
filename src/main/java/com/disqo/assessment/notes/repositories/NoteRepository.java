@@ -1,6 +1,7 @@
 package com.disqo.assessment.notes.repositories;
 
 import com.disqo.assessment.notes.models.db.Note;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +18,6 @@ import java.util.List;
 public interface NoteRepository extends JpaRepository<Note, Long> {
 
     List<Note> findAllByIdIn(Collection<Long> noteIdColl);
+    List<Note> findAllByUserIdOrderByCreatedAt(long userId, Pageable pageable);
     void deleteAllByUserIdAndIdIn(long userId, Collection<Long> noteIdColl);
 }

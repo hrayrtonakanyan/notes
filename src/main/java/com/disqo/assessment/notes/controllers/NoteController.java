@@ -56,6 +56,17 @@ public class NoteController {
         return new Response("areNotesUpdated", true);
     }
 
+    @GetMapping("/notes")
+    public Response getNotes(@RequestAttribute(RequestConstants.USER_SESSION_ATTRIBUTE_NAME) final UserSession userSession,
+                             @RequestParam(RequestConstants.OFFSET_PARAMETER_NAME) final int offset,
+                             @RequestParam(RequestConstants.LIMIT_PARAMETER_NAME) final int limit) {
+        long startTs = System.currentTimeMillis();
+        logger.debug("[GET_NOTES - req]");
+        List<NoteDTO> noteDTOList = noteService.getNotes(userSession, offset, limit);
+        logger.debug("[GET_NOTES - resp] [" + (System.currentTimeMillis() - startTs) + "]");
+        return new Response(noteDTOList);
+    }
+
     @DeleteMapping("/notes")
     public Response deleteNotes(@RequestAttribute(RequestConstants.USER_SESSION_ATTRIBUTE_NAME) final UserSession userSession,
                                 @RequestBody final List<Long> noteIdList) {

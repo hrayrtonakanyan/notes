@@ -23,7 +23,7 @@ public class NotesProperties {
 
     private static final String jwtSecretKey = "sdfadfghsfgjhdgfhjdghmdghnsfbadf";
 
-    private static final long accessTokenLiveTime = 5L * 60 * 60 * 1000;
+    private static final long accessTokenLiveTime = 5L * 60 * 1000;   // Default accessToken expire time is 5 minutes
     private static final int noteTitleMaxLength = 50;
     private static final int noteBodyMaxLength = 1000;
     // endregion

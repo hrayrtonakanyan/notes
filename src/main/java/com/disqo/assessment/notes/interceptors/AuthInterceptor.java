@@ -42,7 +42,16 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        String accessToken = request.getHeader(RequestConstants.ACCESS_TOKEN_HEADER_NAME);
+        String accessToken = null;
+        String header = request.getHeader(RequestConstants.ACCESS_TOKEN_HEADER_NAME);
+        if (header != null && !header.isEmpty()) {
+            String[] headerArr = header.split(" ");
+            if (headerArr.length == 2) {
+                if ("Bearer".equalsIgnoreCase(headerArr[0])) {
+                    accessToken = headerArr[1];
+                }
+            }
+        }
         if (accessToken == null || accessToken.isEmpty()) {
             logger.error("[NOT_AUTHORISED - INVALID_TOKEN] accessToken is empty.");
             handleResponse(response, Response.ErrorType.TOKEN_NOT_FOUND);
@@ -54,7 +63,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             handleResponse(response, Response.ErrorType.INVALID_TOKEN);
             return false;
         }
-        if (userSession.getCreatedAt() > NotesProperties.getAccessTokenLiveTime()) {
+        if (System.currentTimeMillis() - userSession.getCreatedAt() > NotesProperties.getAccessTokenLiveTime()) {
             logger.error("[NOT_AUTHORISED - TOKEN_EXPIRED] userSession is expired.");
             handleResponse(response, Response.ErrorType.TOKEN_EXPIRED);
             return false;

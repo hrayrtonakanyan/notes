@@ -8,12 +8,10 @@ package com.disqo.assessment.notes.constants;
  */
 public class RequestConstants {
 
-    public static final String ACCESS_TOKEN_HEADER_NAME = "x-access-token";
+    public static final String ACCESS_TOKEN_HEADER_NAME = "Authorization";
 
     public static final String USER_SESSION_ATTRIBUTE_NAME = "userSession";
 
-    public static final String GRANT_TYPE_PARAMETER_NAME = "grantType";
-    public static final String REFRESH_TOKEN_PARAMETER_NAME = "refreshToken";
     public static final String OFFSET_PARAMETER_NAME = "offset";
     public static final String LIMIT_PARAMETER_NAME = "limit";
 }

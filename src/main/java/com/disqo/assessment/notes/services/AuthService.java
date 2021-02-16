@@ -3,6 +3,7 @@ package com.disqo.assessment.notes.services;
 import com.disqo.assessment.notes.exceptions.InvalidRequestException;
 import com.disqo.assessment.notes.models.db.User;
 import com.disqo.assessment.notes.models.misc.UserSession;
+import com.disqo.assessment.notes.models.network.RefreshTokenData;
 import com.disqo.assessment.notes.models.network.Response;
 import com.disqo.assessment.notes.models.network.UserAuthData;
 import com.disqo.assessment.notes.repositories.UserRepository;
@@ -66,13 +67,13 @@ public class AuthService {
         return userTokenMap;
     }
 
-    public String token(String grantType, String refreshToken) {
+    public String token(RefreshTokenData refreshTokenData) {
 
-        if (!"grant_type".equals(grantType)) {
-            String errorMessage = String.format("[INVALID_GRANT_TYPE] grantType=%s", grantType);
+        if (!"grant_type".equals(refreshTokenData.getGrantType())) {
+            String errorMessage = String.format("[INVALID_GRANT_TYPE] grantType=%s", refreshTokenData.getGrantType());
             throw new InvalidRequestException(Response.ErrorType.INVALID_GRANT_TYPE, errorMessage);
         }
-        Map<String, String> userInfoMap = decodeJwt(refreshToken);
+        Map<String, String> userInfoMap = decodeJwt(refreshTokenData.getRefreshToken());
         if (userInfoMap == null) {
             String errorMessage = "[NOT_AUTHORISED - INVALID_TOKEN] userInfoMap is null.";
             throw new InvalidRequestException(Response.ErrorType.INVALID_TOKEN, errorMessage);

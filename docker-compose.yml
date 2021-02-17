@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  app:
+    image: 'notes:latest'
+    build:
+      context: .
+    container_name: notesapp
+    depends_on:
+      - pdb
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://pdb:5432/notes
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=dbpassword139*
+    ports:
+      - "8080:8080"
+
+  pdb:
+    image: 'postgres:13.1-alpine'
+    container_name: pdb
+    environment:
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=dbpassword139*
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped

@@ -29,6 +29,12 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId", fetch = FetchType.LAZY)
     private List<Note> noteList;
 
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
+
     public User() {
     }
 

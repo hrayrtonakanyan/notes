@@ -20,8 +20,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +48,15 @@ public class AuthService {
 
     private final ObjectMapper mapper = new ObjectMapper();
     // endregion
+
+    @PostConstruct
+    private void init() {
+        List<User> userList = new ArrayList<>();
+        userList.add(new User("first.user@mail.com", "$2a$08$C9ic5CsLN0AHaJqFELvaUeE1HRRihc2vwhjXgk4KE3P2dJyq8QBIG"));
+        userList.add(new User("second.user@mail.com", "$2a$08$C9ic5CsLN0AHaJqFELvaUeE1HRRihc2vwhjXgk4KE3P2dJyq8QBIG"));
+        userList.add(new User("third.user@mail.com", "$2a$08$C9ic5CsLN0AHaJqFELvaUeE1HRRihc2vwhjXgk4KE3P2dJyq8QBIG"));
+        userRepository.saveAll(userList);
+    }
 
     // region Business logic
     public Map<String, String> logIn(UserAuthData userAuthData) {

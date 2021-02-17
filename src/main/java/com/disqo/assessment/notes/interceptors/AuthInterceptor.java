@@ -5,13 +5,13 @@ import com.disqo.assessment.notes.models.db.User;
 import com.disqo.assessment.notes.models.misc.UserSession;
 import com.disqo.assessment.notes.models.network.Response;
 import com.disqo.assessment.notes.repositories.UserRepository;
-import com.disqo.assessment.notes.utils.NotesProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.TextCodec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,6 +34,11 @@ public class AuthInterceptor implements HandlerInterceptor {
     // endregion
 
     // region Instance fields
+    @Value("${jwt.secret.key}")
+    private String jwtSecretKey;
+    @Value("${access.token.live.time}")
+    private long accessTokenLiveTime;
+
     private UserRepository userRepository;
     private final ObjectMapper mapper = new ObjectMapper();
     // endregion
@@ -63,7 +68,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             handleResponse(response, Response.ErrorType.INVALID_TOKEN);
             return false;
         }
-        if (System.currentTimeMillis() - userSession.getCreatedAt() > NotesProperties.getAccessTokenLiveTime()) {
+        if (System.currentTimeMillis() - userSession.getCreatedAt() > accessTokenLiveTime) {
             logger.error("[NOT_AUTHORISED - TOKEN_EXPIRED] userSession is expired.");
             handleResponse(response, Response.ErrorType.TOKEN_EXPIRED);
             return false;
@@ -91,7 +96,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         String userSessionJson = "";
         try {
             userSessionJson = (String) Jwts.parser()
-                    .setSigningKey(TextCodec.BASE64.encode(NotesProperties.getJwtSecretKey()))
+                    .setSigningKey(TextCodec.BASE64.encode(jwtSecretKey))
                     .parseClaimsJws(jwtToken)
                     .getBody().get("sub");
             return mapper.readValue(userSessionJson, UserSession.class);

@@ -7,7 +7,6 @@ import com.disqo.assessment.notes.models.network.RefreshTokenData;
 import com.disqo.assessment.notes.models.network.Response;
 import com.disqo.assessment.notes.models.network.UserAuthData;
 import com.disqo.assessment.notes.repositories.UserRepository;
-import com.disqo.assessment.notes.utils.NotesProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +16,7 @@ import io.jsonwebtoken.impl.TextCodec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +38,9 @@ public class AuthService {
     // endregion
 
     // region Instance fields
+    @Value("${jwt.secret.key}")
+    private String jwtSecretKey;
+
     private UserRepository userRepository;
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -108,7 +111,7 @@ public class AuthService {
 
             return Jwts.builder()
                     .setSubject(userSessionStr)
-                    .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode(NotesProperties.getJwtSecretKey()))
+                    .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode(jwtSecretKey))
                     .compact();
         } catch (JsonProcessingException e) {
             logger.error("Can not parse UserSession to String. username=" + user.getEmail() + ", " + e.getMessage());
@@ -121,7 +124,7 @@ public class AuthService {
         String userSessionJson = "";
         try {
             userSessionJson = (String) Jwts.parser()
-                    .setSigningKey(TextCodec.BASE64.encode(NotesProperties.getJwtSecretKey()))
+                    .setSigningKey(TextCodec.BASE64.encode(jwtSecretKey))
                     .parseClaimsJws(jwtToken)
                     .getBody().get("sub");
             return mapper.readValue(userSessionJson, new TypeReference<Map<String, String>>() {});

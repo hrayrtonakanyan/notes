@@ -6,10 +6,10 @@ import com.disqo.assessment.notes.models.misc.UserSession;
 import com.disqo.assessment.notes.models.network.NoteDTO;
 import com.disqo.assessment.notes.models.network.Response;
 import com.disqo.assessment.notes.repositories.NoteRepository;
-import com.disqo.assessment.notes.utils.NotesProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +35,11 @@ public class NoteService {
     // endregion
 
     // region Instance fields
+    @Value("${note.title.max.length}")
+    private int noteTitleMaxLength;
+    @Value("${note.body.max.length}")
+    private int noteBodyMaxLength;
+
     private NoteRepository noteRepository;
     // endregion
 
@@ -43,10 +48,10 @@ public class NoteService {
 
         List<Note> noteList = new ArrayList<>();
         for (NoteDTO noteDTO : noteDTOList) {
-            if (noteDTO.getTitle().length() > NotesProperties.getNoteTitleMaxLength()) {
+            if (noteDTO.getTitle().isBlank() || noteDTO.getTitle().length() > noteTitleMaxLength) {
                 throw new InvalidRequestException(Response.ErrorType.PARAMETER_MISMATCH, "NOTE_TITLE_IS_TO_LONG");
             }
-            if (noteDTO.getNote().length() > NotesProperties.getNoteBodyMaxLength()) {
+            if (noteDTO.getNote().length() > noteBodyMaxLength) {
                 throw new InvalidRequestException(Response.ErrorType.PARAMETER_MISMATCH, "NOTE_BODY_IS_TO_LONG");
             }
             noteList.add(new Note(noteDTO, userSession.getUserId()));
@@ -61,10 +66,10 @@ public class NoteService {
             if (noteDTO.getId() == null || noteDTO.getId() < 1) {
                 throw new InvalidRequestException(Response.ErrorType.PARAMETER_MISMATCH, "NOTE_ID_NOT_FOUND_OR_WRONG");
             }
-            if (noteDTO.getTitle().length() > NotesProperties.getNoteTitleMaxLength()) {
+            if (noteDTO.getTitle().isBlank() || noteDTO.getTitle().length() > noteTitleMaxLength) {
                 throw new InvalidRequestException(Response.ErrorType.PARAMETER_MISMATCH, "NOTE_TITLE_IS_TO_LONG");
             }
-            if (noteDTO.getNote().length() > NotesProperties.getNoteBodyMaxLength()) {
+            if (noteDTO.getNote().length() > noteBodyMaxLength) {
                 throw new InvalidRequestException(Response.ErrorType.PARAMETER_MISMATCH, "NOTE_BODY_IS_TO_LONG");
             }
             noteDTOMap.put(noteDTO.getId(), noteDTO);
